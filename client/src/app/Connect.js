@@ -1,7 +1,9 @@
 import React from 'react'
 
+let totalCalorie = 0;
+
 const PostToServer = async (acc) => {
-    const response = await fetch("https://fb31-150-31-93-196.ngrok-free.app/api", {
+    const response = await fetch("https://ad31-150-31-93-196.ngrok-free.app/api", {
         method: "POST",
         mode: "cors",
         headers: {
@@ -11,31 +13,39 @@ const PostToServer = async (acc) => {
         });
     
     const result = await response.json();
-    console.log(result);
+    console.log('===========result===========\n' + result.message);
 } 
 
-const Connect = () => {
-  return (
-    <div>
-        <button
-          style={{ border: "1px solid black" }}
-          onClick={() => {
-            // サーバーに加速度データを送信を送信
-            const acc = {
-                            "first":[
-                            "hugaku"
-                            ],
-                            "second":[
-                            "hogebyuuuuuuu"
-                            ]
-                        }
+const Connect = (props) => {
+    // console.log(props.acc)
+    const acc = props.acc
+    return (
+        <div>
+            <button
+            style={{ border: "1px solid black" }}
+            onClick={() => {
+                // サーバーに加速度データを送信を送信
+                // const acc = {
+                //                 "first":[
+                //                 "hugaku"
+                //                 ],
+                //                 "second":[
+                //                 "hogebyuuuuuuu"
+                //                 ]
+                //             }
 
-            PostToServer(acc);
+                //何秒おきに送るかは未定
+                //ここで特定の時間おきにぐるぐる
+                PostToServer(acc);
 
-          }}
-        >accデータを送る</button>
+                totalCalorie += 1;
+                console.log("カロリー計:" + totalCalorie + "kcal");
 
-    </div>
+            }}
+            >accデータを送る</button>
+
+
+        </div>
   )
 }
 
