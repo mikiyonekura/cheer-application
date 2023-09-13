@@ -7,6 +7,7 @@ import Steps from './Steps'
 let socket;
 
 export default function Home() {
+  //１秒ごとに更新される三次元の加速度
   const [x,setX] = useState(0);
   const [y,setY] = useState(0);
   const [z,setZ] = useState(0);
@@ -38,7 +39,7 @@ export default function Home() {
       setX(accX); 
       setY(accY);
       setZ(accZ);
-    },1000);
+    },100);
 
     window.addEventListener("devicemotion", handleDeviceAcceleration, false);
     
@@ -49,7 +50,7 @@ export default function Home() {
   }, []);
 
   useEffect(()=>{
-    if (xyzlist.length < 10)  {
+    if (xyzlist.length < 6000)  {
       setXYZlist((p)=>[...p,[x,y,z]])
     }
     else {
