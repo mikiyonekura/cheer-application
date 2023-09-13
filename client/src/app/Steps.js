@@ -1,3 +1,4 @@
+'use client';
 import React from 'react'
 
 // 重力加速度のしきい値
