@@ -22,9 +22,9 @@ export default function Home() {
     // 加速度センサーイベント処理
     console.log("start_sensor");
     const handleDeviceAcceleration = function(e){
-      let accX = e.accelerationIncludingGravity.x;
-      let accY = e.accelerationIncludingGravity.y;
-      let accZ = e.accelerationIncludingGravity.z;
+      let accX = e.acceleration.x;
+      let accY = e.acceleration.y;
+      let accZ = e.acceleration.z;
       setX(accX); 
       setY(accY);
       setZ(accZ);
