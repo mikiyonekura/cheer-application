@@ -11,7 +11,7 @@ var _isStep = false;
 
 function initialize() {
     // デバイスの加速度センサーの情報を取得します
-    window.addEventListener('devicemotion', onDeviceMotion);
+    //window.addEventListener('devicemotion', onDeviceMotion);
     console.log("initialize");
 }
 
@@ -34,17 +34,18 @@ function onDeviceMotion(e) {
             _isStep = true;
         }
     }
-    console.log(_step + "歩");
+    console.log("歩数計:" + _step + "歩");
 }
 
 initialize();
 
-const Acc = () => {
+const Steps = () => {
   return (
     <div>
-      {_step + "歩"}
+      {"歩数計:" + _step + "歩"}
     </div>
+    
   )
 }
 
-export default Acc
+export default Steps

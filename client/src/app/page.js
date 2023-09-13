@@ -1,36 +1,49 @@
 'use client';
 import { useEffect, useState } from 'react'
-import io from "socket.io-client"
 import Steps from './Steps'
-let socket;
+import Connect from './Connect';
+import Test from './Test';
 
 export default function Home() {
+  //１秒ごとに更新される三次元の加速度
   const [x,setX] = useState(0);
   const [y,setY] = useState(0);
   const [z,setZ] = useState(0);
 
-  useEffect(() => {
-    // コンポーネントがマウントされたときに socket インスタンスを作成
-    socket = io('http://localhost:4000');
+  const [acc, setAcc] = useState({
+    "weight": 60,
+    "DATA":[
+      {
+          "x": 0.2,
+          "y": 0.1,
+          "z": 0.2
+      },
+      {
+          "x": 0.5,
+          "y": 0.1,
+          "z": -0.1
+      },
+    ]
+  });
+  const [xyzlist,setXYZlist] = useState([{x:0,y:0,z:0}]);
 
-    // コンポーネントがアンマウントされるときに socket 接続を閉じる
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
 
   useEffect(() => {
     // 加速度センサーイベント処理
     console.log("start_sensor");
+    let accX;
+    let accY;
+    let accZ;
     const handleDeviceAcceleration = function(e){
-      let accX = e.acceleration.x;
-      let accY = e.acceleration.y;
-      let accZ = e.acceleration.z;
+      accX = e.acceleration.x;
+      accY = e.acceleration.y;
+      accZ = e.acceleration.z;
+    };
+    const intervalId = setInterval(()=>{
       setX(accX); 
       setY(accY);
       setZ(accZ);
-
-    };
+    },100);
 
     window.addEventListener("devicemotion", handleDeviceAcceleration, false);
     
@@ -40,6 +53,16 @@ export default function Home() {
     };
   }, []);
 
+  useEffect(()=>{
+    if (xyzlist.length < 100)  {
+      setXYZlist((p)=>[...p,{x:x,y:y,z:z}])
+    }
+    else {
+      setXYZlist((p)=>[{x:x,y:y,z:z}])
+    }
+    console.log(xyzlist)
+  },[x,y,z]
+  )
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div>
@@ -47,31 +70,20 @@ export default function Home() {
         <p>x:{x}</p>
         <p>y:{y}</p>
         <p>z:{z}</p>
-        
-        <button 
-          onClick={() => {
-            // サーバーに加速度データを送信を送信
-            console.log("sendAcceleration");
-            const acc = {
-              x: 1,
-              y: 2,
-              z: 3
-            }
-            socket.emit("sendAcceleration", acc)
-          }}
-          style={{ border: "1px solid black" }}
-          >通信</button>
-        <Steps />
+
+        {/* <Steps /> */}
+        <Connect acc={acc}/>
+        <Test xyzlist={xyzlist}/>
 
         <button
           style={{ border: "1px solid black" }}
           onClick={() => {
-            // サーバーに加速度データを送信を送信
-            console.log("finishMeasure");
-            const dummy = "ダミー";
-            socket.emit("finishMeasure", dummy);
+            setXYZlist((p)=>[...p,{x:x,y:y,z:z}])
           }}
-        >計測終了</button>
+        >
+          debug
+        </button>
+
       </div>
     </main>
   );
