@@ -3,16 +3,16 @@ import { useEffect, useState } from 'react'
 
 const Test = (props) => {
 
-    const {acc} = props
+    const {xyzlist} = props
 
     useEffect(() => {
         console.log("useEffect")
     }
-    ,[acc])
-    
+    ,[xyzlist])
+
   return (
     <div>
-      {acc.weight}
+      aa
     </div>
   )
 }

@@ -11,7 +11,7 @@ var _isStep = false;
 
 function initialize() {
     // デバイスの加速度センサーの情報を取得します
-    window.addEventListener('devicemotion', onDeviceMotion);
+    //window.addEventListener('devicemotion', onDeviceMotion);
     console.log("initialize");
 }
 
