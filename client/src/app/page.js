@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react'
 import io from "socket.io-client"
+import Steps from './Steps'
 let socket;
 
 export default function Home() {
@@ -56,6 +57,7 @@ export default function Home() {
           }
           socket.emit("sendAcceleration", acc)
         }}>通信</button>
+        <Steps />
       </div>
     </main>
   );
