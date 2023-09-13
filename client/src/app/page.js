@@ -8,9 +8,10 @@ export default function Home() {
   const [y,setY] = useState(0);
   const [z,setZ] = useState(0);
 
+  const [xinterval, setXinterval]=useState(0)
   useEffect(() => {
     // コンポーネントがマウントされたときに socket インスタンスを作成
-    socket = io('http://localhost:4000');
+    socket = io('https://2116-150-31-93-196.ngrok-free.app');
 
     // コンポーネントがアンマウントされるときに socket 接続を閉じる
     return () => {
@@ -21,15 +22,19 @@ export default function Home() {
   useEffect(() => {
     // 加速度センサーイベント処理
     console.log("start_sensor");
+    let accX;
+    let accY;
+    let accZ;
     const handleDeviceAcceleration = function(e){
-      let accX = e.acceleration.x;
-      let accY = e.acceleration.y;
-      let accZ = e.acceleration.z;
+      accX = e.acceleration.x;
+      accY = e.acceleration.y;
+      accZ = e.acceleration.z;
+    };
+    const intervalId = setInterval(()=>{
       setX(accX); 
       setY(accY);
       setZ(accZ);
-
-    };
+    },1000);
 
     window.addEventListener("devicemotion", handleDeviceAcceleration, false);
     
@@ -39,6 +44,10 @@ export default function Home() {
     };
   }, []);
 
+  useEffect(()=>{
+    console.log(x,y,z)
+  },[x,y,z]
+  )
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div>
@@ -46,7 +55,7 @@ export default function Home() {
         <p>x:{x}</p>
         <p>y:{y}</p>
         <p>z:{z}</p>
-        
+
         <button 
           style={{ border: "1px solid black" }}
           onClick={() => {
@@ -56,6 +65,7 @@ export default function Home() {
             y: 2,
             z: 3
           }
+          console.log("send")
           socket.emit("sendAcceleration", acc)
         }}>通信</button>
       </div>
