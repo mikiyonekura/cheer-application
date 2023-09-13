@@ -4,7 +4,9 @@ import io from "socket.io-client"
 let socket;
 
 export default function Home() {
-  const [alpha, setAlpha] = useState(null);
+  const [x,setX] = useState(0);
+  const [y,setY] = useState(0);
+  const [z,setZ] = useState(0);
 
   useEffect(() => {
     // コンポーネントがマウントされたときに socket インスタンスを作成
@@ -19,32 +21,32 @@ export default function Home() {
   useEffect(() => {
     // 加速度センサーイベント処理
     console.log("start_sensor");
-    const handleDeviceOrientation = function(e){
-      // alpha, beta, gammaの値を取得
-      let alpha = e.alpha;
-      setAlpha(alpha);  // alpha ステートを更新
+    const handleDeviceAcceleration = function(e){
+      let accX = e.acceleration.x;
+      let accY = e.acceleration.y;
+      let accZ = e.acceleration.z;
+      setX(accX); 
+      setY(accY);
+      setZ(accZ);
 
-      let beta = e.beta;
-      let gamma = e.gamma;
-
-      console.log("alpha : " + alpha);
-      console.log("beta : " + beta);
-      console.log("gamma : " + gamma);
     };
 
-    window.addEventListener("deviceorientation", handleDeviceOrientation, false);
+    window.addEventListener("devicemotion", handleDeviceAcceleration, false);
     
     // イベントリスナーをクリーンアップ
     return () => {
-      window.removeEventListener("deviceorientation", handleDeviceOrientation, false);
+      window.removeEventListener("deviceorientation", handleDeviceAcceleration, false);
     };
   }, []);
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div>
-        <p>加速度alphaはこちらです</p>
-        <p>{alpha}</p>
+        <p>加速度はこちらです</p>
+        <p>x:{x}</p>
+        <p>y:{y}</p>
+        <p>z:{z}</p>
+        
         <button 
           style={{ border: "1px solid black" }}
           onClick={() => {
