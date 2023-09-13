@@ -1,10 +1,8 @@
 'use client';
 import { useEffect, useState } from 'react'
-import io from "socket.io-client"
 import Steps from './Steps'
 
 
-let socket;
 
 export default function Home() {
   //１秒ごとに更新される三次元の加速度
@@ -12,17 +10,8 @@ export default function Home() {
   const [y,setY] = useState(0);
   const [z,setZ] = useState(0);
 
-  const [xyzlist,setXYZlist] = useState([[0,0,0]]);
+  const [xyzlist,setXYZlist] = useState([{x:0,y:0,z:0}]);
 
-  useEffect(() => {
-    // コンポーネントがマウントされたときに socket インスタンスを作成
-    socket = io('https://2116-150-31-93-196.ngrok-free.app');
-
-    // コンポーネントがアンマウントされるときに socket 接続を閉じる
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
 
   useEffect(() => {
     // 加速度センサーイベント処理
@@ -50,11 +39,11 @@ export default function Home() {
   }, []);
 
   useEffect(()=>{
-    if (xyzlist.length < 6000)  {
-      setXYZlist((p)=>[...p,[x,y,z]])
+    if (xyzlist.length < 100)  {
+      setXYZlist((p)=>[...p,{x:x,y:y,z:z}])
     }
     else {
-      setXYZlist((p)=>[[x,y,z]])
+      setXYZlist((p)=>[{x:x,y:y,z:z}])
     }
     console.log(xyzlist)
   },[x,y,z]
@@ -76,22 +65,12 @@ export default function Home() {
               y: 2,
               z: 3
             }
-            socket.emit("sendAcceleration", acc)
           }}
           style={{ border: "1px solid black" }}
           >通信</button>
           
         <Steps />
 
-        <button
-          style={{ border: "1px solid black" }}
-          onClick={() => {
-            // サーバーに加速度データを送信を送信
-            console.log("finishMeasure");
-            const dummy = "ダミー";
-            socket.emit("finishMeasure", dummy);
-          }}
-        >計測終了</button>
       </div>
     </main>
   );
