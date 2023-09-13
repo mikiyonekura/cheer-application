@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react'
 import io from "socket.io-client"
+import Steps from './Steps'
 let socket;
 
 export default function Home() {
@@ -48,16 +49,29 @@ export default function Home() {
         <p>z:{z}</p>
         
         <button 
+          onClick={() => {
+            // サーバーに加速度データを送信を送信
+            console.log("sendAcceleration");
+            const acc = {
+              x: 1,
+              y: 2,
+              z: 3
+            }
+            socket.emit("sendAcceleration", acc)
+          }}
+          style={{ border: "1px solid black" }}
+          >通信</button>
+        <Steps />
+
+        <button
           style={{ border: "1px solid black" }}
           onClick={() => {
-          // サーバーに加速度データを送信を送信
-          const acc = {
-            x: 1,
-            y: 2,
-            z: 3
-          }
-          socket.emit("sendAcceleration", acc)
-        }}>通信</button>
+            // サーバーに加速度データを送信を送信
+            console.log("finishMeasure");
+            const dummy = "ダミー";
+            socket.emit("finishMeasure", dummy);
+          }}
+        >計測終了</button>
       </div>
     </main>
   );
