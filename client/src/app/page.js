@@ -2,6 +2,8 @@
 import { useEffect, useState } from 'react'
 import io from "socket.io-client"
 import Steps from './Steps'
+
+
 let socket;
 
 export default function Home() {
@@ -9,7 +11,8 @@ export default function Home() {
   const [y,setY] = useState(0);
   const [z,setZ] = useState(0);
 
-  const [xinterval, setXinterval]=useState(0)
+  const [xyzlist,setXYZlist] = useState([[0,0,0]]);
+
   useEffect(() => {
     // コンポーネントがマウントされたときに socket インスタンスを作成
     socket = io('https://2116-150-31-93-196.ngrok-free.app');
@@ -46,7 +49,13 @@ export default function Home() {
   }, []);
 
   useEffect(()=>{
-    console.log(x,y,z)
+    if (xyzlist.length < 10)  {
+      setXYZlist((p)=>[...p,[x,y,z]])
+    }
+    else {
+      setXYZlist((p)=>[[x,y,z]])
+    }
+    console.log(xyzlist)
   },[x,y,z]
   )
   return (
@@ -70,6 +79,7 @@ export default function Home() {
           }}
           style={{ border: "1px solid black" }}
           >通信</button>
+          
         <Steps />
 
         <button
