@@ -1,23 +1,12 @@
 'use client';
 import { useEffect, useState } from 'react'
-import io from "socket.io-client"
 import Steps from './Steps'
-let socket;
+import Connect from './Connect';
 
 export default function Home() {
   const [x,setX] = useState(0);
   const [y,setY] = useState(0);
   const [z,setZ] = useState(0);
-
-  useEffect(() => {
-    // コンポーネントがマウントされたときに socket インスタンスを作成
-    socket = io('http://localhost:4000');
-
-    // コンポーネントがアンマウントされるときに socket 接続を閉じる
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
 
   useEffect(() => {
     // 加速度センサーイベント処理
@@ -47,31 +36,11 @@ export default function Home() {
         <p>x:{x}</p>
         <p>y:{y}</p>
         <p>z:{z}</p>
-        
-        <button 
-          onClick={() => {
-            // サーバーに加速度データを送信を送信
-            console.log("sendAcceleration");
-            const acc = {
-              x: 1,
-              y: 2,
-              z: 3
-            }
-            socket.emit("sendAcceleration", acc)
-          }}
-          style={{ border: "1px solid black" }}
-          >通信</button>
-        <Steps />
 
-        <button
-          style={{ border: "1px solid black" }}
-          onClick={() => {
-            // サーバーに加速度データを送信を送信
-            console.log("finishMeasure");
-            const dummy = "ダミー";
-            socket.emit("finishMeasure", dummy);
-          }}
-        >計測終了</button>
+        <Steps />
+        <Connect />
+
+
       </div>
     </main>
   );

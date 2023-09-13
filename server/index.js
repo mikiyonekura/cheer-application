@@ -9,7 +9,7 @@ const io = new Server(server, {
     cors: {
         origin: [
             "http://localhost:3000",
-            "https://49bd-150-31-93-196.ngrok-free.app",
+            "https://720a-150-31-93-196.ngrok-free.app",
         ],
     }
 });
