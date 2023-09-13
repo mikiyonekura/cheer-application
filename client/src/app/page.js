@@ -10,23 +10,13 @@ export default function Home() {
   const [y,setY] = useState(0);
   const [z,setZ] = useState(0);
 
-  const [acc, setAcc] = useState({
-    "weight": 60,
-    "DATA":[
-      {
-          "x": 0.2,
-          "y": 0.1,
-          "z": 0.2
-      },
-      {
-          "x": 0.5,
-          "y": 0.1,
-          "z": -0.1
-      },
-    ]
-  });
+
   const [xyzlist,setXYZlist] = useState([{x:0,y:0,z:0}]);
 
+  const [acc, setAcc] = useState({
+    "weight": 60,
+    "DATA": xyzlist
+  });
 
   useEffect(() => {
     // 加速度センサーイベント処理
@@ -53,16 +43,24 @@ export default function Home() {
     };
   }, []);
 
-  useEffect(()=>{
-    if (xyzlist.length < 100)  {
-      setXYZlist((p)=>[...p,{x:x,y:y,z:z}])
+  useEffect(() => {
+    if (xyzlist.length < 600)  {
+      setXYZlist((prev) => [...prev, { x, y, z }]);
+      console.log('doing!');
     }
     else {
-      setXYZlist((p)=>[{x:x,y:y,z:z}])
+      setAcc((prevAcc) => ({
+        ...prevAcc,
+        DATA: xyzlist,
+      }));
+
+      setXYZlist([{ x, y, z }]);
+      console.log('-------------start------------');
     }
-    console.log(xyzlist)
-  },[x,y,z]
-  )
+    // console.log(xyzlist);
+  }, [x, y, z]);
+
+  
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div>
@@ -73,7 +71,7 @@ export default function Home() {
 
         {/* <Steps /> */}
         <Connect acc={acc}/>
-        <Test xyzlist={xyzlist}/>
+        <Test acc={acc}/>
 
         <button
           style={{ border: "1px solid black" }}
