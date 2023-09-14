@@ -19,6 +19,59 @@ import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
 import PauseCircleOutlineIcon from '@mui/icons-material/PauseCircleOutline';
 import TweetButton from './TweetBottun';
 
+
+const CalList = [];
+
+const PostToServer = async (acc) => {
+  const response = await fetch("https://8795-150-31-93-196.ngrok-free.app/api", {
+      method: "POST",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(acc),
+      });
+  
+  const result = await response.json();
+  console.log('===========result===========\n' + result.message);
+  CalList.push(result.message);
+} 
+
+const meanCalorie = () => {
+  let sum = 0;
+  for (let i = 0; i < CalList.length; i++) {
+    sum += Number(CalList[i]);
+  }
+  const mean = sum / CalList.length;
+  console.log('mean = sum / CalList.length',sum, CalList.length)
+  console.log("平均カロリー:" + mean + "kcal");
+  return mean;
+}
+
+
+const yourType = (CalList, mean) => {
+
+  const diff = Math.max(CalList) - Math.min(CalList);
+  let type = "";
+  if (diff > 1.0 && mean < 1.0) {
+    console.log('ゴールキーパー')
+    type = 'ゴールキーパー'
+  } else if (diff > 0.5 ) {
+    console.log('フォワード or ディフェンダー')
+    type = 'フォワード or ディフェンダー'
+  }
+  else if (0.2 < diff < 0.5){
+    console.log('ミッドフィルダー')
+    type = 'ミッドフィルダー'
+  }
+  else if (diff < 0.2) {
+    console.log('ユーティリティ')
+    type = 'ユーティリティ'
+  }
+
+  return type;
+}
+
 export default function Home(){
       //１秒ごとに更新される三次元の加速度
   const [x,setX] = useState(0);
@@ -26,6 +79,11 @@ export default function Home(){
   const [z,setZ] = useState(0);
 
   const [xyzlist,setXYZlist] = useState([{x:0,y:0,z:0}]);
+
+  const [acc, setAcc] = useState({
+    "weight": 60,
+    "DATA": xyzlist
+  });
 
   const [isStart,setIsStart] = useState(false)
   useEffect(() => {
@@ -53,6 +111,13 @@ export default function Home(){
     };
   }, []);
 
+  useEffect(() => {
+    console.log("accが更新されました")
+    console.log(acc)
+    PostToServer(acc);
+}
+,[acc])
+
   useEffect(()=>{
     if (!isStart){
         setXYZlist((p)=>[{x:x,y:y,z:z}])
@@ -64,15 +129,26 @@ export default function Home(){
       setXYZlist((p)=>[{x:x,y:y,z:z}])
       if (isStart){
         console.log("fetch API!!!!!!!!!!!!!!!!!!!!!!!!!!")
+
+        setAcc((prevAcc) => ({
+          ...prevAcc,
+          DATA: xyzlist,
+        }));
       }
     }
     console.log(xyzlist)
   },[x,y,z]
   )
 
+  const [mean,setMean] = useState(0);
   const toggleStart = () =>{
     setIsStart((p) =>!p);
     console.log("toggle");
+    if (isStart){
+      console.log("平均カロリーを計算")
+      setMean(meanCalorie());
+      console.log("あなたのポジションは",yourType(CalList, mean));
+    }
   }
     return (
         <Box sx={{bgcolor:"rgba(23,61,123,1)"}}bgcolor="#17337B" display="flex" justifyContent="center" alignItems="center" height="100vh">
@@ -91,6 +167,7 @@ export default function Home(){
             
             </Grid>
           </Grid>
+
         </Box>
     )
 }
