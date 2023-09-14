@@ -23,7 +23,7 @@ import TweetButton from './TweetBottun';
 const CalList = [];
 
 const PostToServer = async (acc) => {
-  const response = await fetch("https://8795-150-31-93-196.ngrok-free.app/api", {
+  const response = await fetch("https://50e4-150-31-93-196.ngrok-free.app/api", {
       method: "POST",
       mode: "cors",
       headers: {
@@ -53,20 +53,20 @@ const yourType = (CalList, mean) => {
 
   const diff = Math.max(CalList) - Math.min(CalList);
   let type = "";
-  if (diff > 1.0 && mean < 1.0) {
+  if (diff > 0.7 && mean < 0.4) {
     console.log('ゴールキーパー')
     type = 'ゴールキーパー'
-  } else if (diff > 0.5 ) {
-    console.log('フォワード or ディフェンダー')
-    type = 'フォワード or ディフェンダー'
+  } else if (mean > 0.7 ) {
+    console.log('フォワード')
+    type = 'フォワード'
   }
-  else if (0.2 < diff < 0.5){
+  else if (0.5 < mean < 0.7){
     console.log('ミッドフィルダー')
     type = 'ミッドフィルダー'
   }
-  else if (diff < 0.2) {
-    console.log('ユーティリティ')
-    type = 'ユーティリティ'
+  else if (mean < 0.5) {
+    console.log('ディフェンダー')
+    type = 'ディフェンダー'
   }
 
   return type;
@@ -162,7 +162,7 @@ export default function Home(){
             </Grid>
             <Grid item xs={12}>
               <Box  display="flex" justifyContent="center" alignItems="center" mt={6}> 
-                <ResultDialog />
+                <ResultDialog mean={mean} type={yourType(CalList, mean)}/>
               </Box>
             
             </Grid>
@@ -172,7 +172,7 @@ export default function Home(){
     )
 }
 
-function ResultDialog(position) {
+function ResultDialog({mean,type}) {
   const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
@@ -276,17 +276,43 @@ function Fw (){return (<DialogContent>
         aria-describedby="alert-dialog-slide-description"
       >
       
-        <DialogTitle>{"??タイプ"}</DialogTitle>
+        <DialogTitle>{type}タイプ</DialogTitle>
         <Box  display="flex" justifyContent="center" alignItems="center"> 
-        <Typography>あなたの消費calはXXX! </Typography>
-        <br/>
-        <Typography>??の平均:XXX</Typography>
+        <Grid container>
+
+        <Grid item xs={1}/>
+          <Grid item xs={10}>
+        <Typography>あなたの消費calは{mean}</Typography>
+          </Grid>
+
+        <Grid item xs={1}/>
+
+        <Grid item xs={1}/>
+          <Grid item xs={10}>
+          </Grid>
+        </Grid>
+
+        <Grid item xs={1}/>
         </Box>
-        <Fw></Fw>
-        
+
+        {(()=>{
+          if(type=="フォワード"){
+          return <Fw />
+          }
+          else if(type=="ミッドフィルダー"){
+            return <Mf />
+            }
+          else if(type=="ディフェンダー"){
+            return <Df />
+            }
+          else {
+            return <Gk />
+            }
+          })()
+        }
         <DialogActions>
         <Button onClick={handleClose}>閉じる</Button>
-          <TweetButton text={"テスト"} hashtags={"奈良クラブ"}/>
+          <TweetButton text={"あなたの奈良クラブ応援消費カロリーは"+mean*CalList.length+"でした。あなたの応援タイプは"+type+"です。"} hashtags={"奈良クラブ"}/>
         </DialogActions>
       </Dialog>
     </div>
