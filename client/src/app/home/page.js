@@ -49,29 +49,6 @@ const meanCalorie = () => {
 }
 
 
-const yourType = (CalList, mean) => {
-
-  const diff = Math.max(CalList) - Math.min(CalList);
-  let type = "";
-  if (diff > 0.7 && mean < 0.4) {
-    console.log('ゴールキーパー')
-    type = 'ゴールキーパー'
-  } else if (mean > 0.7 ) {
-    console.log('フォワード')
-    type = 'フォワード'
-  }
-  else if (0.5 < mean < 0.7){
-    console.log('ミッドフィルダー')
-    type = 'ミッドフィルダー'
-  }
-  else if (mean < 0.5) {
-    console.log('ディフェンダー')
-    type = 'ディフェンダー'
-  }
-
-  return type;
-}
-
 export default function Home(){
       //１秒ごとに更新される三次元の加速度
   const [x,setX] = useState(0);
@@ -141,15 +118,41 @@ export default function Home(){
   )
 
   const [mean,setMean] = useState(0);
+  const [ptype,setPtype] = useState("ゴールキーパー")
   const toggleStart = () =>{
     setIsStart((p) =>!p);
     console.log("toggle");
     if (isStart){
       console.log("平均カロリーを計算")
       setMean(meanCalorie());
+      setPtype(yourType(CalList, mean))
       console.log("あなたのポジションは",yourType(CalList, mean));
     }
   }
+
+  const yourType = (CalList, mean) => {
+
+    const diff = Math.max(CalList) - Math.min(CalList);
+    let type = "";
+    if (diff > 0.6 && mean < 0.4) {
+      console.log('ゴールキーパー')
+      type = 'ゴールキーパー'
+    } else if (mean > 0.7 ) {
+      console.log('フォワード')
+      type = 'フォワード'
+    }
+    else if (0.5 < mean&&mean < 0.7){
+      console.log('ミッドフィルダー')
+      type = 'ミッドフィルダー'
+    }
+    else if (mean < 0.5) {
+      console.log('ディフェンダー')
+      type = 'ディフェンダー'
+    }
+  
+    return type;
+  }
+
     return (
         <Box sx={{bgcolor:"rgba(23,61,123,1)"}}bgcolor="#17337B" display="flex" justifyContent="center" alignItems="center" height="100vh">
           <Grid container alignItems="center" justify="center">
@@ -162,7 +165,7 @@ export default function Home(){
             </Grid>
             <Grid item xs={12}>
               <Box  display="flex" justifyContent="center" alignItems="center" mt={6}> 
-                <ResultDialog mean={mean} type={yourType(CalList, mean)}/>
+                <ResultDialog mean={mean} type={ptype}/>
               </Box>
             
             </Grid>
@@ -282,7 +285,7 @@ function Fw (){return (<DialogContent>
 
         <Grid item xs={1}/>
           <Grid item xs={10}>
-        <Typography>あなたの消費calは{mean}</Typography>
+        <Typography>あなたの消費calは{(mean*CalList.length).toFixed(2)}</Typography>
           </Grid>
 
         <Grid item xs={1}/>
@@ -312,7 +315,7 @@ function Fw (){return (<DialogContent>
         }
         <DialogActions>
         <Button onClick={handleClose}>閉じる</Button>
-          <TweetButton text={"あなたの奈良クラブ応援消費カロリーは"+mean*CalList.length+"でした。あなたの応援タイプは"+type+"です。"} hashtags={"奈良クラブ"}/>
+          <TweetButton text={"あなたの奈良クラブ応援消費カロリーは"+(mean*CalList.length).toFixed(2)+"でした。あなたの応援タイプは"+type+"です。"} hashtags={"奈良クラブ"}/>
         </DialogActions>
       </Dialog>
     </div>
