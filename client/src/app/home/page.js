@@ -32,6 +32,30 @@ const meanCalorie = () => {
   return mean;
 }
 
+
+const yourType = (CalList, mean) => {
+
+  const diff = Math.max(CalList) - Math.min(CalList);
+  let type = "";
+  if (diff > 1.0 && mean < 1.0) {
+    console.log('ゴールキーパー')
+    type = 'ゴールキーパー'
+  } else if (diff > 0.5 ) {
+    console.log('フォワード or ディフェンダー')
+    type = 'フォワード or ディフェンダー'
+  }
+  else if (0.2 < diff < 0.5){
+    console.log('ミッドフィルダー')
+    type = 'ミッドフィルダー'
+  }
+  else if (diff < 0.2) {
+    console.log('ユーティリティ')
+    type = 'ユーティリティ'
+  }
+
+  return type;
+}
+
 export default function Home(){
       //１秒ごとに更新される三次元の加速度
   const [x,setX] = useState(0);
@@ -107,6 +131,7 @@ export default function Home(){
     if (isStart){
       console.log("平均カロリーを計算")
       setMean(meanCalorie());
+      console.log("あなたのポジションは",yourType(CalList, mean));
     }
   }
     return (
@@ -114,6 +139,7 @@ export default function Home(){
             {isStart?<PauseCircleOutlineIcon sx={{  color: "rgba(196, 41, 63, 1)",fontSize: 300 } } onClick={toggleStart} />:
             <PlayCircleOutlineIcon sx={{  color: "rgba(196, 41, 63, 1)",fontSize: 300 } } onClick={toggleStart} />}
             <p>{mean}</p>
+            <p>あなたのポジションは{yourType(CalList, mean)}</p>
         </Box>
     )
 }
